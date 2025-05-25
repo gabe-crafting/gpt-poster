@@ -15,6 +15,7 @@ export default defineNuxtConfig({
             elevenLabs: process.env.ELEVEN_LABS_API_KEY,
             openAI: process.env.OPENAI_API_KEY,
             cloudName: process.env.CLOUD_NAME,
+            deepseek: process.env.DEEPSEEK_KEY
         }
     }
 })

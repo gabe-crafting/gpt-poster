@@ -53,6 +53,18 @@ const loading = computed(() => {
 </script>
 
 <template>
+  <div class="grid grid-cols-4 gap-2 p-2">
+    <UButton :label="isRecording ? 'stop' : 'record'"
+             @click="recording"
+             style="height: 54px"
+             :loading="loading"/>
+    <div class="flex items-center justify-center col-span-3">
+      <audio controls v-if="audioSrc">
+        <source :src="audioSrc" type="audio/wav"/>
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+  </div>
   <div class="grid grid-cols-2 gap-2 w-full p-2">
     <UCard class="sm:col-span-1 col-span-2">
       <template #header>
@@ -60,19 +72,7 @@ const loading = computed(() => {
       </template>
       <div>
         <div class="grid grid-cols-4 gap-2 pb-2">
-          <UButton :label="isRecording ? 'stop' : 'record'"
-                   @click="recording"
-                   style="height: 54px"
-                   :loading="loading"/>
-          <div class="flex items-center justify-center col-span-3">
-            <audio controls v-if="audioSrc">
-              <source :src="audioSrc" type="audio/wav"/>
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-        </div>
-        <div class="grid grid-cols-4 gap-2 pb-2">
-          <UButton label="copy text" :loading="loading" @click="copy(transcribedText)" />
+          <UButton label="copy text" :loading="loading" @click="copy(transcribedText)"/>
           <UButton label="Transcript" @click="transcribe" :loading="loading"/>
         </div>
 
@@ -91,10 +91,12 @@ const loading = computed(() => {
         </div>
 
         <div class="grid grid-cols-4 gap-2 pb-2">
-          <UButton :label="template.name"
-                   v-for="template in templates"
-                   @click="setTemplate(template)"
-          />
+          <UButtonGroup v-for="template in templates">
+            <UButton :label="template.name"
+                     @click="setTemplate(template)"
+            />
+            <UButton color="neutral" variant="outline" icon="akar-icons:cross" @click="removeTemplate(template)"/>
+          </UButtonGroup>
         </div>
 
         <UInput placeholder="Template name" class="w-full mb-2" v-model="templateName"/>
