@@ -64,5 +64,9 @@ export const useSpeech = () => {
         }
     }
 
-    return {speechToText, transcribedText, loadingSpeech}
+    const getTranscribedText = () => {
+        return transcribedText.value;
+    }
+
+    return {speechToText, transcribedText, loadingSpeech, getTranscribedText}
 }
