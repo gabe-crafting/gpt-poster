@@ -6,12 +6,16 @@ import {useTemplates} from "~/composables/templates.js";
 
 const {audioSrc, isRecording, startRecording, stopRecording, audioBlobRef, record, loadingRecorder} = useRecorder()
 const {speechToText, transcribedText, loadingSpeech} = useSpeech()
+const {sendToGpt, gptResponse, gptLoading} = useGpt()
+
 const initialText = ref('')
 const instruction = ref('Correct spelling and grammar, no additional info, just result')
-const {sendToGpt, gptResponse, gptLoading} = useGpt()
+const gptResponseText = ref('')
+
+const gptInput = ref(null)
+
 const templateName = ref('')
 const {templates, addTemplate, getTemplate, removeTemplate} = useTemplates()
-
 
 const recording = () => {
   if (isRecording.value) {
@@ -31,9 +35,11 @@ const transcribe = () => {
   initialText.value = transcribedText.value
 }
 
-const sendToGptEvent = () => {
+const sendToGptEvent = async () => {
+  console.log("sendToGptEvent")
   if (transcribedText.value) {
-    sendToGpt(transcribedText.value + ": " + instruction.value)
+    await sendToGpt(initialText.value + ": " + instruction.value)
+    gptResponseText.value = gptResponse.value
   }
 }
 
@@ -51,6 +57,13 @@ const setTemplate = (template) => {
 const loading = computed(() => {
   return loadingRecorder.value || loadingSpeech.value || gptLoading.value
 })
+
+const addToGpt = async () => {
+  if (transcribedText.value) {
+    await sendToGpt(initialText.value + ": " + instruction.value)
+    gptInput.value.replaceText(gptResponse.value)
+  }
+}
 
 </script>
 
@@ -95,6 +108,13 @@ const loading = computed(() => {
           <UTooltip text="Run GPT">
             <UButton icon="hugeicons:chat-gpt" :loading="loading" @click="sendToGptEvent"/>
           </UTooltip>
+          <UTooltip text="Run GPT and replace the selection with the output">
+            <UButton :loading="loading" @click="addToGpt">
+              <Icon name="hugeicons:chat-gpt"/>
+              <Icon name="material-symbols:arrow-forward-rounded"/>
+              <Icon name="material-symbols:newspaper"/>
+            </UButton>
+          </UTooltip>
         </UButtonGroup>
       </template>
       <div>
@@ -120,7 +140,8 @@ const loading = computed(() => {
 
     <!-- RESULT -->
     <div class="col-span-2">
-      <TooledTextarea :transcribedText="transcribedText" v-model="gptResponse" class="w-full" :rows="14"/>
+      <TooledTextarea :transcribedText="transcribedText" v-model="gptResponseText" class="w-full" :rows="14"
+                      ref="gptInput"/>
     </div>
   </div>
 </template>
