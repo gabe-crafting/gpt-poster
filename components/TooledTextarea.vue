@@ -82,7 +82,7 @@ defineExpose({
       <UTooltip text="Clear Text">
         <UButton icon="material-symbols:delete-rounded" @click="clearText()" :disabled="disabled"/>
       </UTooltip>
-      <UTooltip text="Clear Text">
+      <UTooltip :text="`${disabled ? 'unlock field' : 'lock field'}`">
         <UButton :icon="`${disabled ? 'famicons:lock-closed-outline' : 'famicons:lock-open-outline'}`"
                  @click="disabled = !disabled"/>
       </UTooltip>
