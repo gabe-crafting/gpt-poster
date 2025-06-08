@@ -36,7 +36,6 @@ const transcribe = () => {
 }
 
 const sendToGptEvent = async () => {
-  console.log("sendToGptEvent")
   if (transcribedText.value) {
     await sendToGpt(initialText.value + ": " + instruction.value)
     gptResponseText.value = gptResponse.value

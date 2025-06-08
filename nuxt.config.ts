@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             apiBase: '/api',
+            posterPass: process.env.POSTER_PASS,
             deepgram: process.env.DEEPGRAM_API_KEY,
             uploadPreset: process.env.UPLOAD_PRESET,
             elevenLabs: process.env.ELEVEN_LABS_API_KEY,
