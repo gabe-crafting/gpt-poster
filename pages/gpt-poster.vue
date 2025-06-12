@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import {ref, onMounted} from 'vue'
 
 const correctPassword = ref<string | null>(null)
 
 const fetchPassword = async () => {
   try {
-    const response = await fetch('https://randomromania.com/pass.json')
+    const response = await fetch('/api/password');
     const data = await response.json()
     correctPassword.value = data.password
   } catch (error) {
