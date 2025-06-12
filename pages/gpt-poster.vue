@@ -1,38 +1,45 @@
 <script setup lang="ts">
-const runtimeConfig = useRuntimeConfig()
-const correctPassword = runtimeConfig.public.posterPass
+import { ref, onMounted } from 'vue'
 
-console.log(correctPassword)
+const correctPassword = ref<string | null>(null)
 
-const securePage = () => {
-
-  if (correctPassword === localStorage.getItem("password")) {
-    return
-  }
-
-  let userInput = prompt("Please enter the password:");
-
-  if (userInput === null) {
-    navigateTo('/'); // Redirect to another page
-  }
-  // Check if password is empty
-  else if (userInput === "") {
-    alert("Password cannot be empty! Try again.");
-    securePage(); // Re-prompt
-  }
-  // Check if password is correct
-  else if (userInput !== correctPassword) {
-    alert("Incorrect password! Try again.");
-    securePage(); // Re-prompt
-  } else {
-    alert("Access granted! Welcome!");
-    localStorage.setItem("password", userInput);
-    // Allow access to page content
+const fetchPassword = async () => {
+  try {
+    const response = await fetch('https://randomromania.com/pass.json')
+    const data = await response.json()
+    correctPassword.value = data.password
+  } catch (error) {
+    alert('Failed to fetch password.')
+    navigateTo('/')
   }
 }
 
-onMounted(() => {
-  securePage()
+const securePage = () => {
+  if (correctPassword.value === localStorage.getItem('password')) {
+    return
+  }
+
+  let userInput = prompt('Please enter the password:')
+
+  if (userInput === null) {
+    navigateTo('/')
+  } else if (userInput === '') {
+    alert('Password cannot be empty! Try again.')
+    securePage()
+  } else if (userInput !== correctPassword.value) {
+    alert('Incorrect password! Try again.')
+    securePage()
+  } else {
+    alert('Access granted! Welcome!')
+    localStorage.setItem('password', userInput)
+  }
+}
+
+onMounted(async () => {
+  await fetchPassword()
+  if (correctPassword.value) {
+    securePage()
+  }
 })
 </script>
 
